@@ -7,11 +7,11 @@ namespace Final_Project
         return Round(PowD(ToDouble(a), ToDouble(p)));
     }
 
-    function initMatrix(n : Int) : Int[][] {
-        return initMultiArray(n, n);
+    function initSquareMatrix(n : Int) : Int[][] {
+        return initMatrix(n, n);
     }
 
-    function initMultiArray(a : Int, b : Int) : Int[][] {
+    function initMatrix(a : Int, b : Int) : Int[][] {
         mutable arr = new Int[][b];
         for (i in 0 .. b - 1) {
             set arr[i] = new Int[a];
