@@ -42,15 +42,10 @@ namespace Final_Project
         controlled adjoint auto;
     }
 
-    operation TC_BEtoLE(TC : Qubit[]) : Unit {
+    // also do int adder
+    operation TC_add_int(INT_A : Int, TC_B : Qubit[]) : Unit {
         body(...) {
-            let N = Length(TC);
-            if (N != 4) {
-                Message("Eror: Only N = 4 Currently Implemented");
-            }
 
-            SWAP(TC[0], TC[3]);
-            SWAP(TC[1], TC[2]);
         }
         adjoint auto;
         controlled auto;
