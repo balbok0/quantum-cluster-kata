@@ -23,8 +23,8 @@ namespace Final_Project {
     operation index_to_distance(index : Qubit[], distances: Int[], target : Qubit[]) : Unit {
         body (...) {
             for(i in 0..255) {
-                let bool_i = int_to_boolsLE(i);
-                (ControlledOnBitString(bool_i, TC_add_int(distances[i], _)))(index, target);
+                let bool_i = int_to_boolsBE(i);
+                //(ControlledOnBitString(bool_i, TC_add_int(distances[i], _)))(index, target);
             }
         }
         adjoint auto;

@@ -1,0 +1,11 @@
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/obj/Debug/netcoreapp2.0/Final_Project.csprojAssemblyReference.cache
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/obj/Debug/netcoreapp2.0/Final_Project.csproj.CoreCompileInputs.cache
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/obj/Debug/netcoreapp2.0/Final_Project.AssemblyInfoInputs.cache
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/obj/Debug/netcoreapp2.0/Final_Project.AssemblyInfo.cs
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/bin/Debug/netcoreapp2.0/Final_Project.deps.json
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/bin/Debug/netcoreapp2.0/Final_Project.runtimeconfig.json
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/bin/Debug/netcoreapp2.0/Final_Project.runtimeconfig.dev.json
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/bin/Debug/netcoreapp2.0/Final_Project.dll
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/bin/Debug/netcoreapp2.0/Final_Project.pdb
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/obj/Debug/netcoreapp2.0/Final_Project.dll
+/Users/john/Desktop/CSE490Q/quantum-cluster-kata/obj/Debug/netcoreapp2.0/Final_Project.pdb
