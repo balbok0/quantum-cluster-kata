@@ -4,6 +4,8 @@ namespace Final_Project
     open Microsoft.Quantum.Primitive;
     open Microsoft.Quantum.Extensions.Convert;
 
+    // Two's complement in Big Endian representation.
+
     operation TC_prepare(a : Int, TC : Qubit[]) : Unit {
         body(...) {
             let N = Length(TC);
@@ -36,6 +38,21 @@ namespace Final_Project
             Controlled X([TC[0]], TC[3]);
             Controlled X([TC[0]], TC[2]);
             Controlled X([TC[0]], TC[1]);
+        }
+        adjoint auto;
+        controlled auto;
+        controlled adjoint auto;
+    }
+
+    operation TC_BEtoLE(TC : Qubit[]) : Unit {
+        body(...) {
+            let N = Length(TC);
+            if (N != 4) {
+                Message("Eror: Only N = 4 Currently Implemented");
+            }
+
+            SWAP(TC[0], TC[3]);
+            SWAP(TC[1], TC[2]);
         }
         adjoint auto;
         controlled auto;
