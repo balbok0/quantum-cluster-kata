@@ -6,23 +6,6 @@ namespace Final_Project
     // from "A novel reversible two's complement gate (TCG) and its quantum mapping"
     // by Ayan Chaudhuri ; Mahamuda Sultana ; Diganta Sengupta ; Atal Chaudhuri
     // https://ieeexplore.ieee.org/document/8073946
-
-    // test if handles negatives properly
-    operation TC_prepare(a : Int, TC : Qubit[]) : Unit {
-        body(...) {
-            let N = Length(TC);
-            mutable bools = int_to_boolsBE(a);
-            for (i in 0..N-1) {
-                if (bools[i]) {
-                    X(TC[i]);
-                }
-            }
-        }
-        adjoint auto;
-        controlled auto;
-        controlled adjoint auto;
-    }
-
     operation TC_negate(TC : Qubit[]) : Unit {
         body(...) {
             let N = Length(TC);
@@ -40,6 +23,21 @@ namespace Final_Project
             Controlled X([TC[0]], TC[3]);
             Controlled X([TC[0]], TC[2]);
             Controlled X([TC[0]], TC[1]);
+        }
+        adjoint auto;
+        controlled auto;
+        controlled adjoint auto;
+    }
+
+    operation TC_prepare(a : Int, TC : Qubit[]) : Unit {
+        body(...) {
+            let N = Length(TC);
+            mutable bools = int_to_boolsBE(a);
+            for (i in 0..N-1) {
+                if (bools[i]) {
+                    X(TC[i]);
+                }
+            }
         }
         adjoint auto;
         controlled auto;
@@ -65,21 +63,37 @@ namespace Final_Project
             for (i in 0..N-1) {
                 SCG_bit_adder(TC_A[i], TC_B[i], carry, TC_target[i]);
             }
+
+            if (sub) {
+                for (i in 0..N-1) {
+                    X(TC_B[i]);
+                }
+            }
         }
         adjoint auto;
         controlled auto;
         controlled adjoint auto;
     }
 
-    operation P_comparator(d : Qubit[], dmax : Qubit[], b : Qubit) : Unit {
+    function TC_construct_targ (b : Qubit, GARBAGE : Qubit[], N : Int) : Qubit[] {
+        mutable targ = [GARBAGE[N-2]];
+        for (i in 1 .. N-2) {
+            set targ = targ + [GARBAGE[N-i-2]];
+        }
+        return targ + [b];
+    }
+
+    operation TC_comparator(d : Qubit[], dmax : Qubit[], b : Qubit, GARBAGE : Qubit[]) : Unit {
         body(...) {
             let N = Length(d);
             let P = Length(dmax);
-            if (N != P) {
-                fail "Eror: improper Pcomparator usage";
+            let Q = Length(GARBAGE);
+            if (N != P || N != Q) {
+                fail "Eror: improper TC_comparator usage";
             }
-            
-            
+
+            TC_add_sub(true, dmax, d, GARBAGE[N-1], TC_construct_targ(b, GARBAGE, N));
+            (ControlledOnBitString([true, false], X))([dmax[N-1], d[N-1]], b); // twos complement
         }
         adjoint auto;
         controlled auto;
