@@ -2,7 +2,6 @@ namespace Final_Project
 {
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Primitive;
-    open Microsoft.Quantum.Extensions.Convert;
 
     // from "A novel reversible two's complement gate (TCG) and its quantum mapping"
     // by Ayan Chaudhuri ; Mahamuda Sultana ; Diganta Sengupta ; Atal Chaudhuri
@@ -72,7 +71,20 @@ namespace Final_Project
         controlled adjoint auto;
     }
 
-    // add cmp here
+    operation P_comparator(d : Qubit[], dmax : Qubit[], b : Qubit) : Unit {
+        body(...) {
+            let N = Length(d);
+            let P = Length(dmax);
+            if (N != P) {
+                fail "Eror: improper Pcomparator usage";
+            }
+            
+            
+        }
+        adjoint auto;
+        controlled auto;
+        controlled adjoint auto;
+    }
 
     operation TC_add_int(INT_A : Int, TC_B : Qubit[], carry : Qubit, TC_target : Qubit[]) : Unit {
         body(...) {

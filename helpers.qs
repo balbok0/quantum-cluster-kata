@@ -1,5 +1,6 @@
 namespace Final_Project
 { 
+    open Microsoft.Quantum.Primitive;
     open Microsoft.Quantum.Extensions.Math;
     open Microsoft.Quantum.Extensions.Convert;
 
@@ -21,11 +22,6 @@ namespace Final_Project
     }
 
     function int_to_boolsBE(a: Int) : Bool[] {
-        let tmp = BigIntToBools(ToBigInt(a));
-        mutable result = new Bool[Length(tmp)];
-        for (i in 0..Length(result) - 1) {
-            set result[i] = tmp[Length(tmp) - 1 - i];
-        }
-        return result;
+        return BigIntToBools(ToBigInt(a));
     }
 }

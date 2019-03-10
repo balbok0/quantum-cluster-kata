@@ -2,8 +2,6 @@ namespace Final_Project
 {
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Primitive;
-    open Microsoft.Quantum.Extensions.Math;
-    open Microsoft.Quantum.Extensions.Convert;
 
     // from "Realization of a Novel Reversible SCG Gate and its
     // "Application for Designing Parallel Adder/Subtractor
@@ -51,46 +49,11 @@ namespace Final_Project
             CNOT(B, Target);
             CNOT(carry, Target);
 
-            CCNOT(A, B, carry);
-            CCNOT(A, B, carry);
+            (ControlledOnBitString([false, true, true], X))([Target, A, B], carry); // add to carry
+            (ControlledOnBitString([true, false, false], X))([Target, A, B], carry); // remove from carry
         }
         adjoint auto;
         controlled auto;
         controlled adjoint auto;
     }
-
-    // from "QUANTUM ADDER OF CLASSICAL NUMBERS"
-    // by A.V. Cherkas and S.A. Chivilikhin
-    operation Rzk (q : Qubit, k : Double) : Unit {
-        body (...) {
-            Rz(4.0*PI()/PowD(2.0, k), q);
-        }
-        adjoint auto;
-        controlled auto;
-        controlled adjoint auto;
-    }
-
-    operation experimental_adder (A : Qubit[], B : Qubit[]) : Unit {
-        body (...) {
-            let N = Length(A);
-            let P = Length(B);
-            if (N != P) {
-                fail "Improper quantum adder usage";
-            }   
-            QFT(LittleEndianToBigEndian(LittleEndian(A)));
-            for (i in 0..P-1) {
-                for (j in 0..i) {
-                    Message(ToStringI(i));
-                    Message(ToStringI(j));
-                    Message("\n");
-                    Controlled Rzk([A[j]], (B[i], ToDouble(i-j+1)));
-                }
-            }
-            Adjoint QFT(LittleEndianToBigEndian(LittleEndian(A)));
-        }
-        adjoint auto;
-        controlled auto;
-        controlled adjoint auto;
-    }
-
 }
