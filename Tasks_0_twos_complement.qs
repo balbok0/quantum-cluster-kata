@@ -64,11 +64,11 @@ namespace Final_Project
             using (GARBAGE = Qubit[3]) {
                 using (CARRY = Qubit[2]) {
                     SCG([TC_A[0], GARBAGE[0], TC_B[0], CARRY[0]], [GARBAGE[1], TC_target[0], CARRY[1], GARBAGE[2]]);
-                    Reset(CARRY[0]); Reset(GARBAGE[0]);
+                    Reset(CARRY[0]);
                     SCG([TC_A[1], GARBAGE[0], TC_B[1], CARRY[1]], [GARBAGE[1], TC_target[1], CARRY[0], GARBAGE[2]]);
-                    Reset(CARRY[1]); Reset(GARBAGE[0]);
+                    Reset(CARRY[1]);
                     SCG([TC_A[2], GARBAGE[0], TC_B[2], CARRY[0]], [GARBAGE[1], TC_target[2], CARRY[1], GARBAGE[2]]);
-                    Reset(CARRY[0]); Reset(GARBAGE[0]);
+                    Reset(CARRY[0]);
                     SCG([TC_A[3], GARBAGE[0], TC_B[3], CARRY[1]], [GARBAGE[1], TC_target[3], CARRY[0], GARBAGE[2]]);
                     ResetAll(CARRY); ResetAll(GARBAGE);
                 }
