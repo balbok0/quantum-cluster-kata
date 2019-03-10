@@ -42,4 +42,26 @@ namespace Final_Project
         controlled auto;
         controlled adjoint auto;
     }
+
+    operation SCG_bit_adder (A : Qubit, sub_flag : Bool, B : Qubit, carry : Qubit, Target : Qubit) : Unit {
+        body (...) {
+            CNOT(A, carry);
+            CNOT(B, carry);
+
+            if (sub_flag) {
+                (ControlledOnBitString([true, false, true], X))([A, B, carry], Target);
+                (ControlledOnBitString([false, true, true], X))([A, B, carry], Target);
+                (ControlledOnBitString([true, true, false], X))([A, B, carry], Target);
+                (ControlledOnBitString([true, false, false], X))([A, B, carry], Target);
+                (ControlledOnBitString([true, false, true], X))([A, B, carry], Target);
+            } else {
+                (ControlledOnBitString([true, false, false], X))([A, B, carry], Target);
+                (ControlledOnBitString([false, true, false], X))([A, B, carry], Target);
+                (ControlledOnBitString([true, true, false], X))([A, B, carry], Target);
+            }
+        }
+        adjoint auto;
+        controlled auto;
+        controlled adjoint auto;
+    }
 }

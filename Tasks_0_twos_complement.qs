@@ -28,7 +28,7 @@ namespace Final_Project
         body(...) {
             let N = Length(TC);
             if (N != 4) {
-                fail "Eror: Only N = 4 Currently Implemented";
+                fail "Eror: Only N = 4 Currently Implemented for TC_negate";
             }
 
             Controlled X([TC[0], TC[1], TC[2]], TC[3]);
@@ -47,53 +47,41 @@ namespace Final_Project
         controlled adjoint auto;
     }
 
-    operation TC_add(TC_A : Qubit[], TC_B : Qubit[], TC_target : Qubit[]) : Unit {
+    operation TC_add_sub(sub : Bool, TC_A : Qubit[], TC_B : Qubit[], carry : Qubit, TC_target : Qubit[]) : Unit {
         body(...) {
             let N = Length(TC_A);
             let P = Length(TC_B);
             let Q = Length(TC_target);
-            if (N != 4) {
-                fail "Eror: Only N = 4 Currently Implemented";
+            if (N != P || N != Q) {
+                fail "Eror: improper TC_add_sub usage";
             }
-            if (P != 4) {
-                fail "Eror: Only N = 4 Currently Implemented";
-            }
-            if (Q != 4) {
-                fail "Eror: Only N = 4 Currently Implemented";
-            }
-            using (GARBAGE = Qubit[3]) {
-                using (CARRY = Qubit[2]) {
-                    SCG([TC_A[0], GARBAGE[0], TC_B[0], CARRY[0]], [GARBAGE[1], TC_target[0], CARRY[1], GARBAGE[2]]);
-                    Reset(CARRY[0]);
-                    SCG([TC_A[1], GARBAGE[0], TC_B[1], CARRY[1]], [GARBAGE[1], TC_target[1], CARRY[0], GARBAGE[2]]);
-                    Reset(CARRY[1]);
-                    SCG([TC_A[2], GARBAGE[0], TC_B[2], CARRY[0]], [GARBAGE[1], TC_target[2], CARRY[1], GARBAGE[2]]);
-                    Reset(CARRY[0]);
-                    SCG([TC_A[3], GARBAGE[0], TC_B[3], CARRY[1]], [GARBAGE[1], TC_target[3], CARRY[0], GARBAGE[2]]);
-                    ResetAll(CARRY); ResetAll(GARBAGE);
-                }
+            for (i in 0..N-1) {
+                SCG_bit_adder(TC_A[i], sub, TC_B[i], carry, TC_target[i]);
             }
         }
+        adjoint auto;
+        controlled auto;
+        controlled adjoint auto;
     }
 
     // add sub and cmp here
 
-    operation TC_add_int(INT_A : Int, TC_B : Qubit[], TC_target : Qubit[]) : Unit {
+    operation TC_add_int(INT_A : Int, TC_B : Qubit[], carry : Qubit, TC_target : Qubit[]) : Unit {
         body(...) {
             let N = Length(TC_B);
             let P = Length(TC_target);
-            if (N != 4) {
-                fail "Eror: Only N = 4 Currently Implemented";
+            if (N != P) {
+                fail "Eror: improper TC_add_int usage";
             }
-            if (P != 4) {
-                fail "Eror: Only N = 4 Currently Implemented";
-            }
-            using (TC_A = Qubit[4]) {
+            using (TC_A = Qubit[N]) {
                 TC_prepare(INT_A, TC_A);
-                TC_add(TC_A, TC_B, TC_target);
-                ResetAll(TC_A);
+                TC_add_sub(false, TC_A, TC_B, carry, TC_target);
+                TC_prepare(INT_A, TC_A); // de-prepares TC_A
             }  
         }
+        adjoint auto;
+        controlled auto;
+        controlled adjoint auto;
     }
 
 
