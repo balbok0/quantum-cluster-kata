@@ -20,7 +20,7 @@ namespace Final_Project
         return arr;
     }
 
-    function int_to_boolsLE(a: Int) : Bool[] {
+    function int_to_boolsBE(a: Int) : Bool[] {
         let tmp = BigIntToBools(ToBigInt(a));
         mutable result = new Bool[Length(tmp)];
         for (i in 0..Length(result) - 1) {
