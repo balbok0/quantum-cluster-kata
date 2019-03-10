@@ -5,7 +5,7 @@ namespace Final_Project
     open Microsoft.Quantum.Extensions.Diagnostics;
 
     operation tests () : Unit {
-        comp_test();
+        SCG_int_adder_test();
     }
 
     operation comp_test () : Unit { 
@@ -87,7 +87,7 @@ namespace Final_Project
                     X(A[1]);
                     DumpRegister("adder_testing_0.txt", A);
                     DumpRegister("adder_testing_0b.txt", B);
-                    TC_add_int(3, A, carry, B);
+                    TC_add_int(20, A, carry, B);
                     DumpRegister("adder_testing_1.txt", A);
                     DumpRegister("adder_testing_1b.txt", B);
                     ResetAll(A);

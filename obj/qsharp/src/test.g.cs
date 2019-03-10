@@ -25,7 +25,7 @@ namespace Final_Project
 
         String ICallable.Name => "tests";
         String ICallable.FullName => "Final_Project.tests";
-        protected ICallable<QVoid, QVoid> comp_test
+        protected ICallable<QVoid, QVoid> SCG_int_adder_test
         {
             get;
             set;
@@ -34,7 +34,7 @@ namespace Final_Project
         public override Func<QVoid, QVoid> Body => (__in__) =>
         {
 #line 8 "/Users/john/Desktop/CSE490Q/quantum-cluster-kata/test.qs"
-            comp_test.Apply(QVoid.Instance);
+            SCG_int_adder_test.Apply(QVoid.Instance);
 #line hidden
             return QVoid.Instance;
         }
@@ -42,7 +42,7 @@ namespace Final_Project
         ;
         public override void Init()
         {
-            this.comp_test = this.Factory.Get<ICallable<QVoid, QVoid>>(typeof(comp_test));
+            this.SCG_int_adder_test = this.Factory.Get<ICallable<QVoid, QVoid>>(typeof(SCG_int_adder_test));
         }
 
         public override IApplyData __dataIn(QVoid data) => data;
@@ -542,7 +542,7 @@ namespace Final_Project
 #line 89 "/Users/john/Desktop/CSE490Q/quantum-cluster-kata/test.qs"
                         MicrosoftQuantumExtensionsDiagnosticsDumpRegister.Apply(("adder_testing_0b.txt", B?.Copy()));
 #line 90 "/Users/john/Desktop/CSE490Q/quantum-cluster-kata/test.qs"
-                        TC_add_int.Apply((3L, A?.Copy(), carry, B?.Copy()));
+                        TC_add_int.Apply((20L, A?.Copy(), carry, B?.Copy()));
 #line 91 "/Users/john/Desktop/CSE490Q/quantum-cluster-kata/test.qs"
                         MicrosoftQuantumExtensionsDiagnosticsDumpRegister.Apply(("adder_testing_1.txt", A?.Copy()));
 #line 92 "/Users/john/Desktop/CSE490Q/quantum-cluster-kata/test.qs"
