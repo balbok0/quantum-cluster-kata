@@ -55,8 +55,16 @@ namespace Final_Project
             if (N != P || N != Q) {
                 fail "Eror: improper TC_add_sub usage";
             }
+
+            if (sub) {
+                X(carry);
+                for (i in 0..N-1) {
+                    X(TC_B[i]);
+                }
+            }
+
             for (i in 0..N-1) {
-                SCG_bit_adder(TC_A[i], sub, TC_B[i], carry, TC_target[i]);
+                SCG_bit_adder(TC_A[i], TC_B[i], carry, TC_target[i]);
             }
         }
         adjoint auto;
@@ -64,7 +72,7 @@ namespace Final_Project
         controlled adjoint auto;
     }
 
-    // add sub and cmp here
+    // add cmp here
 
     operation TC_add_int(INT_A : Int, TC_B : Qubit[], carry : Qubit, TC_target : Qubit[]) : Unit {
         body(...) {
