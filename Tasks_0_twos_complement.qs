@@ -111,13 +111,10 @@ namespace Final_Project
                 TC_prepare(INT_A, TC_A);
                 TC_add_sub(false, TC_A, TC_B, carry, TC_target);
                 TC_prepare(INT_A, TC_A); // de-prepares TC_A
-            }  
+            }
         }
         adjoint auto;
         controlled auto;
         controlled adjoint auto;
     }
-
-
 }
-

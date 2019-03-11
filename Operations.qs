@@ -3,18 +3,55 @@
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Primitive;
 
-    operation quant_find_max (n: Int, dist_oracle: ((Qubit[], Qubit[], Qubit) => Unit : Controlled, Adjoint)) : (Int, Int) {
-        mutable d_max = 0.0;
-        using (d_max_qubit = Qubit()) {
-            using ((i, j, dist_qubit, phase_qubit) = (Qubit[n], Qubit[n], Qubit(), Qubit())) {
-                dist_oracle(i, j, dist_qubit);
-                H(phase_qubit);
+    operation quant_find_max (n: Int, m: Int, indices: Int[], distances: Int[]) : (Int, Int) {
+        mutable prev_i = 0;
+        mutable prev_j = 0;
+        mutable curr_dist = 0;
+        mutable not_bigger = false;
 
-                H(phase_qubit);
-                Adjoint dist_oracle(i, j, dist_qubit);
+        // This external for loop is sanity check.
+        repeat {
+            using ((i, j) = (Qubit[n], Qubit[n])) {
+                // Superposition of indices
+                ApplyToEach(H, i);
+                ApplyToEach(H, j);
+                using (d_max = Qubit[m]) {
+                    repeat {
+                        using ((dist, phase_qubit) = (Qubit[m], Qubit())) {                        
+                            distance_add(i, j, dist, distances);
+                            distance_cmp(dist, d_max, phase_qubit);
+                            Adjoint distance_add(i, j, dist, distances);
+
+                            if(M(phase_qubit) == Zero) {
+                                set not_bigger = true;
+                            } else { // It was bigger
+                                set prev_i = MeasureIntegerBE(BigEndian(i));
+                                set prev_j = MeasureIntegerBE(BigEndian(j));
+
+                                ResetAll(i);
+                                ResetAll(j);
+                                ApplyToEach(H, i);
+                                ApplyToEach(H, j);
+                            }
+                            Reset(phase_qubit);
+                            ResetAll(dist);
+                        }
+                    } until (not_bigger)
+                    fixup {
+                    }
+
+                    ResetAll(d_max);
+                }
+                ResetAll(i);
+                ResetAll(j);
             }
+        } until (prev_i == 0 && prev_j == 0)
+        // Sanity check. 
+        // Should be executed only once, unless some edge case happens
+        fixup {
         }
-        return (0, 0);
+
+        return (prev_i, prev_j);
     }
 
     operation GroversHelper(i : Qubit[], j : Qubit[], oracle : (Qubit[] => Unit : Adjoint)) : Unit {
