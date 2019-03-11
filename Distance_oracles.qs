@@ -4,7 +4,7 @@ namespace Final_Project {
 
     operation distance_add(i : Qubit[], j : Qubit[], target : Qubit[], distances : Int[]) : Unit {
         body (...) {
-
+            index_to_distance(i + j, distances, target);
         }
         adjoint auto;
         controlled auto;
