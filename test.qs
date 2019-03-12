@@ -5,7 +5,23 @@ namespace Final_Project
     open Microsoft.Quantum.Extensions.Diagnostics;
 
     operation tests () : Unit {
-        SCG_int_adder_test();
+        SCG_exp_adder_test();
+    }
+
+    operation SCG_exp_adder_test () : Unit {
+        using (A = Qubit[4]) {
+            using (B = Qubit[4]) {
+                X(A[2]);
+                //X(B[1]);
+                X(B[3]);
+                DumpRegister("adder_testing_0.txt", A);
+                DumpRegister("adder_testing_0b.txt", B);
+                experimental_adder(A, B);
+                DumpRegister("adder_testing_1.txt", A);
+                ResetAll(A);
+                ResetAll(B);
+            }
+        }
     }
 
     operation comp_test () : Unit { 
