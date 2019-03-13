@@ -28,6 +28,11 @@
                                 set prev_i = MeasureIntegerBE(BigEndian(i));
                                 set prev_j = MeasureIntegerBE(BigEndian(j));
 
+                                // Set d_max to dist
+                                ResetAll(d_max);
+                                efficient_adder(d_max, dist);
+                                
+                                // Reset distances, since they collapsed
                                 ResetAll(i);
                                 ResetAll(j);
                                 ApplyToEach(H, i);

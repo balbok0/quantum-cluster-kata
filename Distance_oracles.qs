@@ -39,7 +39,7 @@ namespace Final_Project {
 
     operation IntegerIncrementLE_wrap(i: Int, qs: Qubit[], distances: Int[]) : Unit {
         body (...) {
-            IntegerIncrementLE(distances[i], BigEndianToLittleEndian(BigEndian(qs)));
+            IntegerIncrementLE(distances[i], LittleEndian(qs));
         }
         
         adjoint auto;
