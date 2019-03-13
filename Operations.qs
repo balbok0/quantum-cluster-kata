@@ -59,101 +59,80 @@
         return (prev_i, prev_j);
     }
 
-    operation GroversHelper(i : Qubit[], j : Qubit[], oracle : (Qubit[] => Unit : Adjoint)) : Unit {
+    operation divisive_clust(n: Int, m: Int, point_idxs : Int[], distances : Int[]) : Int[] {
+        mutable groupings = new Int[Length(point_idxs)];
         
-        body (...) {
-        
+        if (similarity_crit(point_idxs, distances)) {
+            return groupings; // Return all zeros if this group is similar enough.
         }
         
-        adjoint invert;
-    }
-
-    operation OracleConverterImpl_Reference (markingOracle : ((Qubit[], Qubit[], Qubit) => Unit : Adjoint), i : Qubit[], j : Qubit[]) : Unit {    
-        body (...) {
-            using (target = Qubit()) {
-                // Put the target into the |-⟩ state
-                X(target);
-                H(target);
-                
-                // Apply the marking oracle; since the target is in the |-⟩ state,
-                // flipping the target if the register satisfies the oracle condition will apply a -1 factor to the state
-                markingOracle(i, j, target);
-                
-                // Put the target back into |0⟩ so we can return it
-                H(target);
-                X(target);
+        // Find furthest points
+        let (i, j) = quant_find_max(n, m, point_idxs, distances);
+        
+        // Classify each point into cluster closer to point j (tag = 1), or closer to i (tag = 0) 
+        for (idx in 0..Length(point_idxs) - 1) {
+            if (distances[16*i + point_idxs[idx]] > distances[16*j + point_idxs[idx]]) {
+                set groupings[idx] = 1;
+            } else {
+                set groupings[idx] = 0;
             }
         }
-        
-        adjoint invert;
-    }
-    
-    
-    function OracleConverter_Reference (markingOracle : ((Qubit[], Qubit[], Qubit) => Unit : Adjoint)) : ((Qubit[], Qubit[]) => Unit : Adjoint) {
-        return OracleConverterImpl_Reference(markingOracle, _, _);
-    }
 
-    operation GroversSearch_Reference (i: Qubit[], j: Qubit[], oracle : ((Qubit[], Qubit[], Qubit) => Unit : Adjoint), iterations : Int) : Unit {
-        
-        body (...) {
-            let phaseOracle = OracleConverter_Reference(oracle);
-            HadamardTransform_Reference(i);
-            HadamardTransform_Reference(j);
-
-            for (_ in 1 .. iterations) {
-                GroverIteration_Reference(i, j, phaseOracle);
+        // Create new lists of points, which can be passed recursively down
+        mutable points_j = new Int[Sum(groupings)];
+        mutable points_i = new Int[Length(point_idxs) - Length(points_j)];
+        mutable idx_i = 0;
+        mutable idx_j = 0;
+        for (idx in 0..Length(point_idxs) - 1) {
+            if(groupings[idx] == 0) {
+                set points_i[idx_i] = point_idxs[idx];
+                set idx_i = idx_i + 1; 
+            } else {
+                set points_j[idx_j] = point_idxs[idx];
+                set idx_j = idx_j + 1;
             }
         }
-        
-        adjoint invert;
-    }
-    
-    operation GroverIteration_Reference (i : Qubit[], j : Qubit[], oracle : ((Qubit[], Qubit[]) => Unit : Adjoint)) : Unit {
-        
-        body (...) {
-            oracle(i, j);
-            HadamardTransform_Reference(i);
-            HadamardTransform_Reference(j);
 
-            ConditionalPhaseFlip_Reference(i, j);
-
-            HadamardTransform_Reference(i);
-            HadamardTransform_Reference(j);
+        // Apply algo recursively
+        mutable grouping_i = divisive_clust(n, m, points_i, distances);
+        mutable grouping_j = divisive_clust(n, m, points_j, distances);
+        
+        // Make two groupings compatible (i.e. shift values in grouping j up by max value of grouping i)
+        let max_i = Max(grouping_i);
+        for (idx in 0..Length(grouping_j) - 1) {
+            set grouping_j[idx] = grouping_j[idx] + max_i + 1;
         }
-        
-        adjoint invert;
-    }
 
-    operation HadamardTransform_Reference (register : Qubit[]) : Unit {
-        
-        body (...) {
-            ApplyToEachA(H, register);
+        // Update main grouping based on results from branch i and j.
+        set idx_i = 0;
+        set idx_j = 0;
+        for (idx in 0..Length(groupings) - 1) {
+            if(groupings[idx] == 0) {
+                set groupings[idx] = grouping_i[idx_i];
+                set idx_i = idx_i + 1; 
+            } else {
+                set groupings[idx] = grouping_j[idx_j];
+                set idx_j = idx_j + 1;
+            }
         }
-        
-        adjoint invert;
+
+        return groupings;
     }
 
-    operation ConditionalPhaseFlip_Reference (i : Qubit[], j: Qubit[]) : Unit {
-        body (...) {
-            // TODO: Go from all zeros to actual indexes.
-            let pattern_i = new Bool[Length(i)];
-            let pattern_j = new Bool[Length(j)];
-            // Define a marking oracle which detects an all zero state
-            let allZerosOracle = Oracle_ArbitraryPattern_Reference(_, _, _, pattern_i, pattern_j);
-            
-            // Convert it into a phase-flip oracle and apply it
-            let flipOracle = OracleConverter_Reference(allZerosOracle);
-            flipOracle(i, j);
+    function Sum(arr : Int[]) : Int {
+        mutable result = 0;
+        for (i in 0..Length(arr) - 1) {
+            set result = result + arr[i];
         }
-        adjoint self;
+        return result;
     }
 
-    operation Oracle_ArbitraryPattern_Reference (i : Qubit[], j: Qubit[], target : Qubit, pattern_i : Bool[], pattern_j : Bool[]) : Unit {
-        
-        body (...) {
-            (ControlledOnBitString(pattern_i + pattern_j, X))(i + j, target);
+    function similarity_crit(point_idxs : Int[], distances : Int[]) : Bool {
+        // Stub method, which will make divise clustering run exactly once.
+        if (Length(point_idxs) == 16) {
+            return false;
         }
         
-        adjoint invert;
+        return true;
     }
 }
