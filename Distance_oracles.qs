@@ -13,11 +13,7 @@ namespace Final_Project {
 
     operation distance_cmp(d1 : Qubit[], d2 : Qubit[], target : Qubit) : Unit {
         body (...) {
-            // What should be garbage? Doesn't need to be adjointable I think
-            using (garbage = Qubit[Length(d1)]) {
-                TC_comparator(d1, d2, target, garbage);
-                ResetAll(garbage);
-            }
+            efficient_TC_comparator(d1, d2, target);
         }
     }
 

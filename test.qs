@@ -3,36 +3,97 @@ namespace Final_Project
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Primitive;
     open Microsoft.Quantum.Extensions.Diagnostics;
+    open Microsoft.Quantum.Extensions.Convert;
 
     operation tests () : Unit {
-        SCG_exp_adder_test();
+        thorough_comp_test();
     }
 
-    operation SCG_exp_adder_test () : Unit {
+    operation test_rzk() : Unit {
+        using (A = Qubit()) {
+            X(A);
+            Rzk(A, 1.0);
+            DumpRegister("rzk_test.txt", [A]);
+            Reset(A);
+        }
+    }
+
+    operation thorough_adder_test () : Unit {
+        let n = 4;
+        let N = PowI(2, n);
+        using (A = Qubit[n]) {
+            using (B = Qubit[n]) {
+                for (i in 0..N-1) {
+                    for (j in 0..N-1) {
+                        IntegerIncrementLE(i, BigEndianToLittleEndian(BigEndian(A)));
+                        IntegerIncrementLE(j, BigEndianToLittleEndian(BigEndian(B)));
+                        efficient_adder(A, B);
+                        let r = ToStringI(MeasureIntegerBE(BigEndian(A)));
+                        let b = ToStringI(MeasureIntegerBE(BigEndian(B)));
+                        let a = ToStringI(i);
+                        Message(a + " + " + b + " = " + r);
+                        ResetAll(A);
+                        ResetAll(B);
+                    }
+                }
+            }
+        }
+    }
+
+    operation thorough_comp_test () : Unit {
+        let n = 4;
+        let N = PowI(2, n);
+        using (A = Qubit[n]) {
+            using (B = Qubit[n]) {
+                using (c = Qubit()) {
+                    for (i in 0..N-1) {
+                        for (j in 0..N-1) {
+                            IntegerIncrementLE(i, BigEndianToLittleEndian(BigEndian(A)));
+                            IntegerIncrementLE(j, BigEndianToLittleEndian(BigEndian(B)));
+                            efficient_TC_comparator(A, B, c);
+                            let r = ToStringB((M(c) == One));
+                            let b = ToStringI(MeasureIntegerBE(BigEndian(B)));
+                            let a = ToStringI(MeasureIntegerBE(BigEndian(A)));
+                            Message(a + " > " + b + " is " + r);
+                            ResetAll(A);
+                            ResetAll(B);
+                            Reset(c);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    operation exp_adder_test () : Unit {
         using (A = Qubit[4]) {
             using (B = Qubit[4]) {
                 X(A[2]);
-                //X(B[1]);
+                X(B[1]);
                 X(B[3]);
                 DumpRegister("adder_testing_0.txt", A);
                 DumpRegister("adder_testing_0b.txt", B);
-                experimental_adder(A, B);
+                Adjoint efficient_adder(A, B);
                 DumpRegister("adder_testing_1.txt", A);
+                DumpRegister("adder_testing_1b.txt", B);
+                efficient_adder(A, B);
+                DumpRegister("adder_testing_2.txt", A);
+                DumpRegister("adder_testing_2b.txt", B);
                 ResetAll(A);
                 ResetAll(B);
             }
         }
     }
 
-    operation comp_test () : Unit { 
+    operation exp_comp_test () : Unit { 
         using (A = Qubit[4]) {
             using (B = Qubit[4]) {
                 using (b = Qubit()) {
-                    using (garb = Qubit[4]) {
                         X(B[2]);
                         X(A[1]);
-                        TC_comparator(A, B, b, garb);
-                        DumpRegister("comp_garbage.txt", garb);
+                        DumpRegister("comp_testing_0.txt", A);
+                        DumpRegister("comp_testing_0b.txt", B);
+                        efficient_TC_comparator(A, B, b);
                         if (M(b) == One) {
                             Message("1");
                         } else {
@@ -41,74 +102,6 @@ namespace Final_Project
                         ResetAll(A);
                         ResetAll(B);
                         Reset(b);
-                        ResetAll(garb);
-                    }
-                }
-            }
-        }
-    }
-
-    operation SCG_sub_test () : Unit {
-        using (A = Qubit[4]) {
-            using (B = Qubit[4]) {
-                using (carry = Qubit()) {
-                    using (Target = Qubit[4]) {
-                        X(A[1]);
-                        X(B[1]);
-                        X(B[0]);
-                        DumpRegister("adder_testing_0.txt", A);
-                        DumpRegister("adder_testing_0b.txt", B);
-                        TC_add_sub(true, A, B, carry, Target);
-                        DumpRegister("adder_testing_1.txt", A);
-                        DumpRegister("adder_testing_1b.txt", B);
-                        DumpRegister("adder_testing_1T.txt", Target);
-                        ResetAll(A);
-                        ResetAll(B);
-                        Reset(carry);
-                        ResetAll(Target);
-                    }
-                }
-            }
-        }
-    }
-
-    operation SCG_adder_test () : Unit {
-        using (A = Qubit[4]) {
-            using (B = Qubit[4]) {
-                using (carry = Qubit()) {
-                    using (Target = Qubit[4]) {
-                        X(A[1]);
-                        X(B[1]);
-                        X(B[0]);
-                        DumpRegister("adder_testing_0.txt", A);
-                        DumpRegister("adder_testing_0b.txt", B);
-                        TC_add_sub(false, A, B, carry, Target);
-                        DumpRegister("adder_testing_1.txt", A);
-                        DumpRegister("adder_testing_1b.txt", B);
-                        DumpRegister("adder_testing_1T.txt", Target);
-                        ResetAll(A);
-                        ResetAll(B);
-                        Reset(carry);
-                        ResetAll(Target);
-                    }
-                }
-            }
-        }
-    }
-
-    operation SCG_int_adder_test () : Unit {
-        using (A = Qubit[4]) {
-            using (B = Qubit[4]) {
-                using (carry = Qubit()) {
-                    X(A[1]);
-                    DumpRegister("adder_testing_0.txt", A);
-                    DumpRegister("adder_testing_0b.txt", B);
-                    TC_add_int(20, A, carry, B);
-                    DumpRegister("adder_testing_1.txt", A);
-                    DumpRegister("adder_testing_1b.txt", B);
-                    ResetAll(A);
-                    ResetAll(B);
-                    Reset(carry);
                 }
             }
         }
