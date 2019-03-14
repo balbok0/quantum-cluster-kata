@@ -16,7 +16,7 @@ namespace Final_Project
 
         static void Main(string[] args)
         {
-            List<Int64> data = load_csv("data_2_peak_binom_close.txt");
+            List<List<Int64>> data = load_csv("data_2d_binom.txt");
 
             long[] distances = get_distances(data);
 
@@ -41,28 +41,30 @@ namespace Final_Project
         /// <summary> Method <c>load_csv</c> 
         /// loads a csv file given path to the file, 
         /// and stores it in class.</summary>
-        static List<Int64> load_csv(string file_path) {
-            List<Int64> data = new List<Int64>();
+        static List<List<Int64>> load_csv(string file_path) {
+            List<List<Int64>> data = new List<List<Int64>>();
             using(var reader = new StreamReader(file_path))
             {
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
                     var values = line.Split(';');
-                    foreach (int a in Array.ConvertAll(values, Int64.Parse)) {
-                        data.Add(a);
-                    }
+                    data.Add(Array.ConvertAll(values, Int64.Parse).ToList());
                 }
             }
             return data;
         }
 
-        static Int64[] get_distances(List<Int64> arr) {
+        static Int64[] get_distances(List<List<Int64>> arr) {
             long[] result = new long[arr.Count * arr.Count];
             for(int i = 0; i < arr.Count; i++) {
                 for(int j = 0; j < arr.Count; j++) {
-                    result[16 * i + j] = Math.Abs(arr[i] - arr[j]);
-                }    
+                    long dist = 0;
+                    for(int idx = 0; idx < arr[i].Count; idx++) {
+                        dist += (arr[i][idx] - arr[j][idx]) * (arr[i][idx] - arr[j][idx]);
+                    }
+                    result[16 * i + j] = (long) Math.Sqrt(dist);
+                }
             }
             return result;
         }
