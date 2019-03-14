@@ -29,11 +29,19 @@ namespace Final_Project
                 for (int i = 0; i < data.Count; i++) {
                     indices[i] = i;
                 }
-                QArray<long> result = divisive_clust.Run(qsim, 4, 4, new QArray<long>(indices), new QArray<long>(distances)).Result;
-                Console.WriteLine("Result:");
-                Console.Write("[");
-                Console.Write(String.Join(", ", result));
-                Console.WriteLine("]");
+                ResourcesEstimator estimator = new ResourcesEstimator();
+                QArray<long> result = divisive_clust.Run(estimator, 4, 4, new QArray<long>(indices), new QArray<long>(distances)).Result;
+
+                var estimator_data = estimator.Data;
+                Console.WriteLine($"QubitCliffords: {estimator_data.Rows.Find("QubitClifford")["Sum"]}");
+                Console.WriteLine($"Ts: {estimator_data.Rows.Find("T")["Sum"]}");
+                Console.WriteLine($"CNOTs: {estimator_data.Rows.Find("CNOT")["Sum"]}");
+
+                // QArray<long> result = divisive_clust.Run(qsim, 4, 4, new QArray<long>(indices), new QArray<long>(distances)).Result;
+                // Console.WriteLine("Result:");
+                // Console.Write("[");
+                // Console.Write(String.Join(", ", result));
+                // Console.WriteLine("]");
                 // tests.Run(qsim).Wait();
             }
         }

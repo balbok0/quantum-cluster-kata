@@ -4,7 +4,7 @@ import numpy as np
 path = "data_2d_binom.txt" # "data_2_peak_binom_far.txt" # "data_2_peak_binom_close.txt"
 # Sometimes things go wrong 
 
-logic = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0] # [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0] # [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0]
+logic = [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0] # [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0] # [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0]
 arr = np.loadtxt(path, delimiter=';')
 
 zeros = []
@@ -16,7 +16,7 @@ for idx, i in enumerate(logic):
         ones.append(arr[idx])
 ones = np.array(ones)
 zeros = np.array(zeros)
-print(ones)
+
 plt.plot(ones[:, 0], ones[:, 1], color='b', marker='.', linestyle='')
 plt.plot(zeros[:, 0], zeros[:, 1], color='r', marker='.', linestyle='')
 
