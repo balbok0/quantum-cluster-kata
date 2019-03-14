@@ -20,7 +20,7 @@ namespace Final_Project {
     operation index_to_distance(index : Qubit[], distances: Int[], target : Qubit[]) : Unit {
         body (...) {
             for(i in 0..255) {
-                let bool_i = int_to_boolsBE(i);
+                let bool_i = int_to_boolsBE(i, Length(index));
                 using (stub = Qubit[Length(target)]) {
                     // What do I do with carry? NEEDS TO BE REVERSIBLE
                     (ControlledOnBitString(bool_i, IntegerIncrementLE_wrap(i, _, distances)))(index, target);

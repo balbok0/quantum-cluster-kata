@@ -6,7 +6,6 @@
     operation quant_find_max (n: Int, m: Int, indices: Int[], distances: Int[]) : (Int, Int) {
         mutable prev_i = 0;
         mutable prev_j = 0;
-        mutable curr_dist = 0;
         mutable not_bigger = false;
 
         // This external for loop is sanity check.
@@ -50,7 +49,7 @@
                 ResetAll(i);
                 ResetAll(j);
             }
-        } until (prev_i == 0 && prev_j == 0)
+        } until (prev_i != prev_j)
         // Sanity check. 
         // Should be executed only once, unless some edge case happens
         fixup {
@@ -115,7 +114,6 @@
                 set idx_j = idx_j + 1;
             }
         }
-
         return groupings;
     }
 

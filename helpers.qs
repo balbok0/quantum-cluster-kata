@@ -21,7 +21,13 @@ namespace Final_Project
         return arr;
     }
 
-    function int_to_boolsBE(a: Int) : Bool[] {
-        return BigIntToBools(ToBigInt(a));
+    function int_to_boolsBE(a: Int, size: Int) : Bool[] {
+        mutable tmp = BigIntToBools(ToBigInt(a));
+        set tmp = tmp[0..size-1];
+        mutable result = new Bool[size];
+        for(i in 0..size-1) {
+            set result[i] = tmp[size - i - 1];
+        }
+        return result;
     }
 }
