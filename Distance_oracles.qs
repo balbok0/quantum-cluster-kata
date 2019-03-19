@@ -4,8 +4,9 @@ namespace Final_Project {
 
     operation distance_add(i : Qubit[], j : Qubit[], target : Qubit[], distances : Int[]) : Unit {
         body (...) {
-            index_to_distance(i + j, distances, target);
+            index_to_distance(i + j, target, distances);
         }
+
         adjoint auto;
         controlled auto;
         controlled adjoint auto;
@@ -17,16 +18,15 @@ namespace Final_Project {
         }
 
         adjoint auto;
+        controlled auto;
+        controlled adjoint auto;
     }
 
-    operation index_to_distance(index : Qubit[], distances: Int[], target : Qubit[]) : Unit {
+    operation index_to_distance(index : Qubit[], target : Qubit[], distances: Int[]) : Unit {
         body (...) {
             for(i in 0..255) {
                 let bool_i = int_to_boolsBE(i, Length(index));
-                using (stub = Qubit[Length(target)]) {
-                    // What do I do with carry? NEEDS TO BE REVERSIBLE
-                    (ControlledOnBitString(bool_i, IntegerIncrementBE_wrap(i, _, distances)))(index, target);
-                }
+                (ControlledOnBitString(bool_i, IIBE_wrap(i, _, distances)))(index, target);
             }
         }
 
@@ -35,11 +35,21 @@ namespace Final_Project {
         controlled adjoint auto;
     }
 
-    operation IntegerIncrementBE_wrap(i: Int, qs: Qubit[], distances: Int[]) : Unit {
+    operation IIBE_wrap(i: Int, qs: Qubit[], distances: Int[]) : Unit{
         body (...) {
-            IntegerIncrementLE(distances[i], BigEndianToLittleEndian(BigEndian(qs)));
+            IntegerIncrementBE(distances[i], qs);
         }
-        
+
+        adjoint auto;
+        controlled auto;
+        controlled adjoint auto;
+    }
+
+    operation IntegerIncrementBE(i: Int, qs: Qubit[]) : Unit {
+        body (...) {
+            IntegerIncrementLE(i, BigEndianToLittleEndian(BigEndian(qs)));
+        }
+
         adjoint auto;
         controlled auto;
         controlled adjoint auto;

@@ -20,6 +20,26 @@ namespace Final_Project
         return result;
     }
 
+    function Remove(arr : Int[], val : Int) : Int[] {
+        mutable new_size = 0;
+        for(i in arr) {
+            if(i != val) {
+                set new_size = new_size + 1;
+            }
+        }
+
+        mutable result = new Int[new_size];
+        mutable idx = 0;
+        for(i in arr) {
+            if(i != val) {
+                set result[idx] = i;
+                set idx = idx + 1;
+            }
+        }
+
+        return result;
+    }
+
     function initMatrix(a : Int, b : Int) : Int[][] {
         mutable arr = new Int[][b];
         for (i in 0 .. b - 1) {
