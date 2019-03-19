@@ -12,6 +12,14 @@ namespace Final_Project
         return initMatrix(n, n);
     }
 
+    function Sum(arr : Int[]) : Int {
+        mutable result = 0;
+        for (i in 0..Length(arr) - 1) {
+            set result = result + arr[i];
+        }
+        return result;
+    }
+
     function initMatrix(a : Int, b : Int) : Int[][] {
         mutable arr = new Int[][b];
         for (i in 0 .. b - 1) {

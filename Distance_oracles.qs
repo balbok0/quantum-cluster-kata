@@ -15,6 +15,8 @@ namespace Final_Project {
         body (...) {
             efficient_TC_comparator(d1, d2, target);
         }
+
+        adjoint auto;
     }
 
     operation index_to_distance(index : Qubit[], distances: Int[], target : Qubit[]) : Unit {
@@ -23,7 +25,7 @@ namespace Final_Project {
                 let bool_i = int_to_boolsBE(i, Length(index));
                 using (stub = Qubit[Length(target)]) {
                     // What do I do with carry? NEEDS TO BE REVERSIBLE
-                    (ControlledOnBitString(bool_i, IntegerIncrementLE_wrap(i, _, distances)))(index, target);
+                    (ControlledOnBitString(bool_i, IntegerIncrementBE_wrap(i, _, distances)))(index, target);
                 }
             }
         }
@@ -33,9 +35,9 @@ namespace Final_Project {
         controlled adjoint auto;
     }
 
-    operation IntegerIncrementLE_wrap(i: Int, qs: Qubit[], distances: Int[]) : Unit {
+    operation IntegerIncrementBE_wrap(i: Int, qs: Qubit[], distances: Int[]) : Unit {
         body (...) {
-            IntegerIncrementLE(distances[i], LittleEndian(qs));
+            IntegerIncrementLE(distances[i], BigEndianToLittleEndian(BigEndian(qs)));
         }
         
         adjoint auto;

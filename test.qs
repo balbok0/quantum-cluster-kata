@@ -6,7 +6,9 @@ namespace Final_Project
     open Microsoft.Quantum.Extensions.Convert;
 
     operation tests () : Unit {
-        thorough_comp_test();
+        thorough_adder_test();
+
+        // thorough_comp_test();
     }
 
     operation test_rzk() : Unit {

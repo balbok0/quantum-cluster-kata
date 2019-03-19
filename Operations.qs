@@ -2,66 +2,66 @@
 {
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Primitive;
+    open Microsoft.Quantum.Extensions.Convert;
 
     operation quant_find_max (n: Int, m: Int, indices: Int[], distances: Int[]) : (Int, Int) {
         mutable prev_i = 0;
         mutable prev_j = 0;
-        mutable not_bigger = false;
+
+        if (Length(indices) < 2) {
+            fail "There need to be at least 2 indices to be found.";
+        }
+
+        // It's obvious, and Grover might not work in this case ([0, 1, 1, 0] with 2 points)
+        if (Length(indices) == 2) {
+            return (indices[0], indices[1]);
+        }
 
         // This external for loop is sanity check.
-        repeat {
-            using ((i, j) = (Qubit[n], Qubit[n])) {
-                // Superposition of indices
-                ApplyToEach(H, i);
-                ApplyToEach(H, j);
-                using (d_max = Qubit[m]) {
-                    repeat {
-                        using ((dist, phase_qubit) = (Qubit[m], Qubit())) {                        
-                            distance_add(i, j, dist, distances);
-                            distance_cmp(dist, d_max, phase_qubit);
-                            Adjoint distance_add(i, j, dist, distances);
+        using ((i, j) = (Qubit[n], Qubit[n])) {
+            // Superposition of indices
 
-                            if(M(phase_qubit) == Zero) {
-                                set not_bigger = true;
-                            } else { // It was bigger
-                                set prev_i = MeasureIntegerBE(BigEndian(i));
-                                set prev_j = MeasureIntegerBE(BigEndian(j));
+            using (d_max = Qubit[m]) {
+                repeat { // Modified Grover's
+                    using ((dist, phase_qubit) = (Qubit[m], Qubit())) {
+                        prep_indices(indices, i);
+                        prep_indices(indices, j);
 
-                                // Set d_max to dist
-                                ResetAll(d_max);
-                                efficient_adder(d_max, dist);
-                                
-                                // Reset distances, since they collapsed
-                                ResetAll(i);
-                                ResetAll(j);
-                                ApplyToEach(H, i);
-                                ApplyToEach(H, j);
-                            }
-                            Reset(phase_qubit);
-                            ResetAll(dist);
-                        }
-                    } until (not_bigger)
-                    fixup {
+                        distance_add(i, j, dist, distances);
+                        GroversSearch(dist, d_max, phase_qubit, distance_cmp, Length(indices) * Length(indices) / 2);  // There are C(N, 2) indices combinations.
+                        distance_cmp(dist, d_max, phase_qubit);
+                        Adjoint distance_add(i, j, dist, distances);
+
+                        set prev_i = MeasureIntegerBE(BigEndian(i));
+                        set prev_j = MeasureIntegerBE(BigEndian(j));
+
+                        // Set d_max to dist
+                        ResetAll(d_max);
+                        efficient_adder(d_max, dist);
+
+                        Reset(phase_qubit);
+                        ResetAll(dist);
                     }
-
-                    ResetAll(d_max);
+                } until (prev_i != prev_j)
+                fixup {
                 }
-                ResetAll(i);
-                ResetAll(j);
+
+                ResetAll(d_max);
             }
-        } until (prev_i != prev_j)
-        // Sanity check. 
-        // Should be executed only once, unless some edge case happens
-        fixup {
+            ResetAll(i);
+            ResetAll(j);
         }
+
+        Message("Length: " + ToStringI(Length(indices)));
+        Message("i: " + ToStringI(prev_i) + " j: " + ToStringI(prev_j));
 
         return (prev_i, prev_j);
     }
 
-    operation divisive_clust(n: Int, m: Int, point_idxs : Int[], distances : Int[]) : Int[] {
+    operation divisive_clust(n : Int, m: Int, point_idxs : Int[], distances : Int[]) : Int[] {
         mutable groupings = new Int[Length(point_idxs)];
         
-        if (similarity_crit(point_idxs, distances)) {
+        if (similarity_crit(point_idxs, distances, PowI(2, n)) || Length(point_idxs) <= 1) {
             return groupings; // Return all zeros if this group is similar enough.
         }
         
@@ -117,20 +117,50 @@
         return groupings;
     }
 
-    function Sum(arr : Int[]) : Int {
-        mutable result = 0;
-        for (i in 0..Length(arr) - 1) {
-            set result = result + arr[i];
+    operation prep_indices (idxs : Int[], qubits : Qubit[]) : Unit {
+        body (...) {
+            if (Max(idxs) >= PowI(2, Length(qubits))) {
+                fail "Not enough qubits to encode given indices";
+            }
+
+            let coeffs = get_coeffs(idxs, Length(qubits));
+
+            PrepareArbitraryState(coeffs, BigEndian(qubits));
         }
-        return result;
+        adjoint auto;
+        controlled auto;
+        controlled adjoint auto;
     }
 
-    function similarity_crit(point_idxs : Int[], distances : Int[]) : Bool {
-        // Stub method, which will make divise clustering run exactly once.
-        if (Length(point_idxs) == 16) {
-            return false;
+    function get_coeffs(idxs : Int[], qb_len : Int) : ComplexPolar[] {
+        mutable coeffs = new ComplexPolar[PowI(2, qb_len)];
+        for (i in 0 .. Length(idxs) - 1) {
+            set coeffs[idxs[i]] = ComplexPolar(1. / ToDouble(Length(idxs)), 0.);
         }
+        return coeffs;
+    }
+
+    function similarity_crit(point_idxs : Int[], distances : Int[], n : Int) : Bool {
+        // Stub method, which will make divise clustering run exactly once.
+        mutable idx_dist = 0;
+        for(i in 0..Length(point_idxs) - 2) {
+            for (j in i..Length(point_idxs) - 1) {
+                if (distances[n * i + j] > idx_dist) {
+                    set idx_dist = distances[n * i + j];
+                }
+            }
+        }
+
+        return Max(distances) * 2 / 3 > idx_dist;
+    }
+
+    operation quant_find_smallest(n : Int, m : Int, indices : Int[], distances : Int[]) : Int {
         
-        return true;
+        
+        return 0;
+    }
+
+    operation quant_find_n_smallest() : Int[] {
+        return new Int[2];
     }
 }

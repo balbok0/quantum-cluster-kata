@@ -19,6 +19,7 @@ namespace Final_Project
 
     operation efficient_adder (A : Qubit[], B : Qubit[]) : Unit {
         body (...) {
+
             let N = Length(A);
             let P = Length(B);
             if (N != P) {
