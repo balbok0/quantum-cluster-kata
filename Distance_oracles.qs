@@ -24,7 +24,7 @@ namespace Final_Project {
 
     operation index_to_distance(index : Qubit[], target : Qubit[], distances: Int[]) : Unit {
         body (...) {
-            for(i in 0..255) {
+            for(i in 0.. Length(distances) - 1) {
                 let bool_i = int_to_boolsBE(i, Length(index));
                 (ControlledOnBitString(bool_i, IIBE_wrap(i, _, distances)))(index, target);
             }

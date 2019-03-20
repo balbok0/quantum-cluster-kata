@@ -16,7 +16,7 @@ namespace Final_Project
 
         static void Main(string[] args)
         {
-            List<List<Int64>> data = load_csv("data_2d_binom.txt");
+            List<List<Int64>> data = load_csv("data_2d_binom_2q.txt");
 
             long[] distances = get_distances(data);
 
@@ -46,7 +46,7 @@ namespace Final_Project
                 // Console.WriteLine("]");
 
                 // DEMO - Outlier Detection
-                QArray<long> result = quantum_detection_outlier.Run(qsim, 4, 9, new QArray<long>(indices), 5, 5, new QArray<long>(distances)).Result;
+                QArray<long> result = quantum_detection_outlier.Run(qsim, 2, 5, new QArray<long>(indices), 2, 3, new QArray<long>(distances)).Result;
                 Console.WriteLine("Result:");
                 Console.Write("[");
                 Console.Write(String.Join(", ", result));
@@ -82,7 +82,7 @@ namespace Final_Project
                     for(int idx = 0; idx < arr[i].Count; idx++) {
                         dist += (arr[i][idx] - arr[j][idx]) * (arr[i][idx] - arr[j][idx]);
                     }
-                    result[16 * i + j] = (long) Math.Sqrt(dist);
+                    result[arr.Count * i + j] = (long) Math.Sqrt(dist);
                 }
             }
             return result;

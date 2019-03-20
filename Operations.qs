@@ -185,7 +185,7 @@
             ResetAll(i);
         }
 
-        return (result_idx, result_dist);
+        return (result_idx, -result_dist); // change distances back to positive
     }
 
     function class_find_smallest(n : Int, indices : Int[], distances : Int[]) : (Int, Int) {
