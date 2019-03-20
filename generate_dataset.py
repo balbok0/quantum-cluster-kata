@@ -25,13 +25,27 @@ np.savetxt('data_geom_far.txt', data, fmt='%d', delimiter=';')
 
 # 2D two peak binomial
 # 5 + 5 = 10 < 15/sqrt(2)
-ax = np.multiply(-1, np.random.binomial(5, 7.0/15.0, 8))
-ay = np.multiply(-1, np.random.binomial(5, 7.0/15.0, 8))
+ax = np.multiply(-1, np.random.binomial(15, 7.0/15.0, 8))
+ay = np.multiply(-1, np.random.binomial(15, 7.0/15.0, 8))
 a = zip(ax, ay)
-bx = np.random.binomial(5, 7.0/15.0, 8)
-by = np.random.binomial(5, 7.0/15.0, 8)
+bx = np.random.binomial(15, 7.0/15.0, 8)
+by = np.random.binomial(15, 7.0/15.0, 8)
 b = zip(bx, by)
 
 data = np.concatenate((a, b))
 np.savetxt('data_2d_binom.txt', data, fmt='%d', delimiter=';')
 
+# 2D three peak binomial
+# 5 + 5 = 10 < 15/sqrt(2)
+ax = np.multiply(-1, np.random.binomial(15, 7.0/15.0, 5))
+ay = np.multiply(-1, np.random.binomial(15, 7.0/15.0, 5))
+a = zip(ax, ay)
+bx = np.random.binomial(15, 7.0/15.0, 5)
+by = np.random.binomial(15, 7.0/15.0, 5)
+b = zip(bx, by)
+cx = np.random.binomial(15, 7.0/15.0, 5)
+cy = np.multiply(-1, np.random.binomial(15, 7.0/15.0, 5))
+c = zip(cx, cy)
+
+data = np.concatenate((a, b, c))
+np.savetxt('data_2d_3binom.txt', data, fmt='%d', delimiter=';')

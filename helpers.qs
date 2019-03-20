@@ -42,6 +42,11 @@ namespace Final_Project
         return arr;
     }
 
+    /// Literally a Square Root of Int.
+    function SqrtI(a : Int) : Int {
+        return Round(Sqrt(ToDouble(a)));
+    }
+
     /// # Summary
     /// Sum returns a sum of all elements in the Integer array.
     ///

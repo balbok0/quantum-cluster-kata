@@ -116,7 +116,7 @@
         
         // Classify each point into cluster closer to point j (tag = 1), or closer to i (tag = 0) 
         for (idx in 0..Length(point_idxs) - 1) {
-            if (distances[16*i + point_idxs[idx]] > distances[16*j + point_idxs[idx]]) {
+            if (distances[SqrtI(Length(distances)) * i + point_idxs[idx]] > distances[SqrtI(Length(distances)) * j + point_idxs[idx]]) {
                 set groupings[idx] = 1;
             } else {
                 set groupings[idx] = 0;
