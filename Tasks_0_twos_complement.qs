@@ -122,4 +122,16 @@ namespace Final_Project
         controlled auto;
         controlled adjoint auto;
     }
+
+    operation negateBE(a : Qubit[]) : Unit {
+        body (...) {
+            for (q in a) {
+                X(q);
+            }
+            IntegerIncrementBE(1, a);
+        }
+        adjoint auto;
+        controlled auto;
+        controlled adjoint auto;
+    }
 }
