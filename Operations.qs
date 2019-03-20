@@ -178,7 +178,7 @@
                 set result_idx = MeasureIntegerBE(BigEndian(i)); // Get result from collapsed indices
 
                 ResetAll(dist);
-                ResetAll(d_max);
+                ResetAll(d_min);
                 Reset(phase_qubit);
             }
 
@@ -198,7 +198,7 @@
                 set dist_i = dist_i - distances[indices[i] * n + indices[j]]; // Make distance negative, so max is actually a min
             }
 
-            if(dist_i < max_dist) {
+            if(dist_i < min_dist) {
                 set min_dist = dist_i;
                 set min_i = indices[i];
             }
@@ -208,7 +208,7 @@
     }
 
     operation quant_find_k_smallest(n: Int, m : Int, indices : Int[], k : Int, distances: Int[]) : Int[][] {
-        if (k < Length(indices)) {
+        if (k > Length(indices)) {
             fail "Not enough indices given to find k values.";
         }
 

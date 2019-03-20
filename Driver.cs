@@ -46,7 +46,7 @@ namespace Final_Project
                 // Console.WriteLine("]");
 
                 // DEMO - Outlier Detection
-                QArray<long> result = quantum_detection_outlier.Run(qsim, 4, 5, new QArray<long>(indices), new QArray<long>(distances)).Result;
+                QArray<long> result = quantum_detection_outlier.Run(qsim, 4, 9, new QArray<long>(indices), 5, 5, new QArray<long>(distances)).Result;
                 Console.WriteLine("Result:");
                 Console.Write("[");
                 Console.Write(String.Join(", ", result));
