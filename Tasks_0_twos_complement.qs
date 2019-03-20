@@ -9,7 +9,20 @@ namespace Final_Project
     // by A.V. Cherkas and S.A. Chivilikhin
     // https://iopscience.iop.org/article/10.1088/1742-6596/735/1/012083/pdf
 
-    // create gate described by matrix [1 0; 0 e^(2*i*PI/2^k)]
+    /// # Summary
+    /// create gate described by matrix [1 0; 0 e^(2*i*PI/2^k)]
+    ///
+    /// # Input
+    /// ## q
+    /// qubit being rotated.
+    /// ## k
+    /// Amount to rotate, defined by above equation.
+    ///
+    /// # Example
+    /// ```Q#
+    /// // often used as a controlled rotation
+    /// Controlled Rzk([A], (B, 1.0)); 
+    /// ```
     operation Rzk (q : Qubit, k : Double) : Unit {
         body (...) {
             ApplyDiagonalUnitary([0.0, 2.0*PI()/PowD(2.0, k)], BigEndian([q]));
@@ -19,7 +32,20 @@ namespace Final_Project
         controlled adjoint auto;
     }
 
-    // Adder that takes A, B -> A+B, B
+    /// # Summary
+    /// Adder that takes A, B -> A+B, B
+    /// Uses QFT cascading design described in paper
+    ///
+    /// # Input
+    /// ## A
+    /// operand. Will become A+B.
+    /// ## B
+    /// operand. Remains B.
+    ///
+    /// # Example
+    /// ```Q#
+    /// efficient_adder(A, B);
+    /// ```
     operation efficient_adder (A : Qubit[], B : Qubit[]) : Unit {
         body (...) {
             let N = Length(A);
@@ -44,8 +70,28 @@ namespace Final_Project
         controlled adjoint auto;
     }   
     
-    // d, dmax, target -> d, dmax, (d > dmax)⊕target
-    // uses 1 extra qubit in function
+
+    /// # Summary
+    /// Compares d and dmax
+    /// d, dmax, target -> d, dmax, (d > dmax)⊕target
+    /// uses 1 extra qubit in function
+    ///
+    /// # Input
+    /// ## d
+    /// Unchanged operand.
+    /// ## dmax
+    /// Unchanged operand.
+    /// ## target
+    /// Flipped if d > dmax
+    ///
+    /// # Example
+    /// ```Q#
+    /// using (target = Qubit()) {
+    ///     efficient_TC_comparator(A, B, target);
+    ///     // do stuff with knowledge of d > dmax
+    ///     efficient_TC_comparator(A, B, target); // reset target
+    /// }
+    /// ```
     operation efficient_TC_comparator (d : Qubit[], dmax : Qubit[], target : Qubit) : Unit {
         body(...) {
             let N = Length(d);
@@ -57,7 +103,7 @@ namespace Final_Project
             }
             // if dmax is negative and d is positive, d > dmax
             (ControlledOnBitString([false, true], X))([d[0], dmax[0]], target);
-            
+
             using (dmax_tmp = Qubit()) {
                 CNOT(dmax[0], dmax_tmp); // store sign bit of dmax in dmax_tmp
                 Adjoint efficient_adder(dmax, d); // subtract d from dmax and store in dmax
