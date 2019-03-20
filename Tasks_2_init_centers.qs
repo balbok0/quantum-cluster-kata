@@ -16,9 +16,8 @@ namespace Final_Project
         mutable centers = new Int[k];
     
         set centers[0] = RandomInt(n);
-        // centers[1] = quant_find_max(centers[0], data);
-        for (i in 2 .. k - 1) {
-            // centers[i] = distance_oracle(centers, data);
+        for (i in 1 .. k - 1) {
+            // centers[i] = quant_find_max(centers[0..i-1], data);
         }
     
         return centers;
