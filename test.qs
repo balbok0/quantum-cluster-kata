@@ -14,8 +14,8 @@ namespace Final_Project
     /// ```
     operation tests () : Unit {
         thorough_adder_test(4);
-        // thorough_comp_test(4);
-        // test_rzk();
+        thorough_comp_test(4);
+        test_rzk();
     }
 
 
@@ -54,7 +54,7 @@ namespace Final_Project
                         let r = ToStringI(MeasureIntegerBE(BigEndian(A))); // prints A+B
                         let b = ToStringI(MeasureIntegerBE(BigEndian(B))); // prints B
                         let a = ToStringI(i); // prints i (should be what A was)
-                        // Message(a + " + " + b + " = " + r);
+                        Message(a + " + " + b + " = " + r);
                         ResetAll(A);
                         ResetAll(B);
                     }
@@ -83,7 +83,7 @@ namespace Final_Project
                             let r = ToStringB((M(c) == One)); // prints if A > B
                             let b = ToStringI(MeasureIntegerBE(BigEndian(B))); // prints B
                             let a = ToStringI(MeasureIntegerBE(BigEndian(A))); // prints A
-                            // Message(a + " > " + b + " is " + r);
+                            Message(a + " > " + b + " is " + r);
                             ResetAll(A);
                             ResetAll(B);
                             Reset(c);

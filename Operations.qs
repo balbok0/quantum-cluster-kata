@@ -4,6 +4,27 @@
     open Microsoft.Quantum.Primitive;
     open Microsoft.Quantum.Extensions.Convert;
 
+    /// # Summary
+    /// quant_find_max finds a pair of 2 indices,
+    /// which correspond to 2 data points maximizing the distance between them.
+    ///
+    /// # Input
+    /// ## n
+    /// Number of qubits required to represent indices.
+    /// ## m
+    /// Number of qubits required to represent distance between any 2 points.
+    /// ## indices
+    /// Indices of datapoints over which to look for pair of points.
+    /// ## distances
+    /// Distances between two points where distances[c] is 
+    /// distance between points c0, c1, such that c0 = c / n; c1 = c % n.
+    ///
+    /// # Example
+    /// ```Q#
+    /// mutable i = 0..15;
+    /// mutable a = new Int[256];
+    /// let (c0, c1) = quant_find_max(4, 5, i, a);
+    /// ```
     operation quant_find_max (n: Int, m: Int, indices: Int[], distances: Int[]) : (Int, Int) {
         mutable prev_i = 0;
         mutable prev_j = 0;
@@ -57,6 +78,32 @@
         return (prev_i, prev_j);
     }
 
+    /// # Summary
+    /// divisive_clust clusters given dataset into groups,
+    /// and returns array of cluster number a datapoint at given index is part of.
+    ///
+    /// # Input
+    /// ## n
+    /// Number of qubits required to represent indices.
+    /// ## m
+    /// Number of qubits required to represent distance between any 2 points.
+    /// ## point_idxs
+    /// Indices of datapoints over which to look for pair of points.
+    /// ## distances
+    /// Distances between two points where distances[c] is 
+    /// distance between points c0, c1, such that c0 = c / n; c1 = c % n.
+    ///
+    /// # Output
+    /// Returns an array of length of point_idxs,
+    /// such that result[i] corresponds to cluster tag of data point with index
+    /// point_idxs[i]
+    ///
+    /// # Example
+    /// ```Q#
+    /// mutable i = 0..15;
+    /// mutable a = new Int[256];
+    /// let groups = quant_find_max(4, 5, i, a);
+    /// ```
     operation divisive_clust(n : Int, m: Int, point_idxs : Int[], distances : Int[]) : Int[] {
         mutable groupings = new Int[Length(point_idxs)];
         
@@ -116,6 +163,29 @@
         return groupings;
     }
 
+    /// # Summary
+    /// prep_indices prepares encodes superposition of idxs into qubits.
+    ///
+    /// # Input
+    /// ## idxs
+    /// Array of indices to encode into qubits.
+    /// ## qubits
+    /// Qubits into which indices should be encoded.
+    ///
+    /// # Throws
+    /// Fails if indices are to big to encode into qubits.
+    ///
+    /// # Example
+    /// ```Q#
+    /// mutable a = new Int[4];
+    /// for(i in 0 .. Length(a) - 1) {
+    ///     set a[i] = i * i;
+    /// }
+    /// using (qs = Qubit[4]) {
+    ///     prep_indices(a, qs);
+    ///     ResetAll(qs);
+    /// }
+    /// ```
     operation prep_indices (idxs : Int[], qubits : Qubit[]) : Unit {
         body (...) {
             if (Max(idxs) >= PowI(2, Length(qubits))) {
@@ -131,6 +201,25 @@
         controlled adjoint auto;
     }
 
+    /// # Summary
+    /// get_coeffs encodes array of Ints, into array of ComplexPolars,
+    /// which contains amplitudes of given states.
+    ///
+    /// # Input
+    /// ## idxs
+    /// Array of indices to encode into qubits.
+    /// ## qblen
+    /// Length of qubit array for which this ComplexPolar array will be used.
+    /// Used to figure out the number of possible states.
+    ///
+    /// # Example
+    /// ```Q#
+    /// mutable a = new Int[4];
+    /// for(i in 0 .. Length(a) - 1) {
+    ///     set a[i] = i;
+    /// }
+    /// let c = get_coeffs(a, 2);
+    /// ```
     function get_coeffs(idxs : Int[], qb_len : Int) : ComplexPolar[] {
         mutable coeffs = new ComplexPolar[PowI(2, qb_len)];
         for (i in 0 .. Length(idxs) - 1) {
@@ -139,6 +228,30 @@
         return coeffs;
     }
 
+    /// # Summary
+    /// similarity_crit given indices of data points,
+    /// returns whether these datapoints are similar enough
+    /// to be considered a cluster. 
+    ///
+    /// # Input
+    /// ## n
+    /// Number of qubits required to represent indices.
+    /// ## point_idxs
+    /// Array of indices to encode into qubits.
+    /// ## distances
+    /// Distances between two points where distances[c] is 
+    /// distance between points c0, c1, such that c0 = c / n; c1 = c % n.
+    ///
+    /// # Example
+    /// ```Q#
+    /// mutable a = new Int[4];
+    /// mutable b = new Int[16];
+    /// for(i in 0 .. Length(a) - 1) {
+    ///     set a[i] = i;
+    /// }
+    ///
+    /// similarity_crit(a, b, 4);
+    /// ```
     function similarity_crit(point_idxs : Int[], distances : Int[], n : Int) : Bool {
         // Stub method, which will make divise clustering run exactly once.
         mutable idx_dist = 0;
@@ -153,6 +266,28 @@
         return Max(distances) * 2 / 3 > idx_dist;
     }
 
+    /// # Summary
+    /// quant_find_smallest returns an index of data point,
+    /// which minimizes sum of distances to all other points, and
+    /// sum of these distances.
+    ///
+    /// # Input
+    /// ## n
+    /// Number of qubits required to represent indices.
+    /// ## m
+    /// Number of qubits required to represent distance between any 2 points.
+    /// ## indices
+    /// Indices of datapoints over which to look for pair of points.
+    /// ## distances
+    /// Distances between two points where distances[c] is 
+    /// distance between points c0, c1, such that c0 = c / n; c1 = c % n.
+    ///
+    /// # Example
+    /// ```Q#
+    /// mutable i = 0..15;
+    /// mutable a = new Int[256];
+    /// let c = quant_find_smallest(4, 5, i, a);
+    /// ```
     operation quant_find_smallest(n : Int, m : Int, indices : Int[], distances : Int[]) : (Int, Int) {
         mutable result_dist = 0;
         mutable result_idx = 0;
@@ -190,6 +325,26 @@
         return (result_idx, Modulus(result_dist, n));
     }
 
+    /// # Summary
+    /// class_find_smallest returns an index of data point,
+    /// which minimizes sum of distances to all other points, and
+    /// sum of these distances.
+    ///
+    /// # Input
+    /// ## n
+    /// Number of qubits required to represent indices.
+    /// ## indices
+    /// Indices of datapoints over which to look for pair of points.
+    /// ## distances
+    /// Distances between two points where distances[c] is 
+    /// distance between points c0, c1, such that c0 = c / n; c1 = c % n.
+    ///
+    /// # Example
+    /// ```Q#
+    /// mutable i = 0..15;
+    /// mutable a = new Int[256];
+    /// let c = class_find_smallest(4, i, a);
+    /// ```
     function class_find_smallest(n : Int, indices : Int[], distances : Int[]) : (Int, Int) {
         mutable min_i = 0;
         mutable min_dist = Length(indices) * Max(distances);
@@ -209,6 +364,28 @@
         return (min_i, min_dist);
     }
 
+    /// # Summary
+    /// quant_find_k_smallest returns an indices of k unique data point,
+    /// which minimize sum of distances to all other points, and
+    /// sum of these distances for each returned datapoint.
+    ///
+    /// # Input
+    /// ## n
+    /// Number of qubits required to represent indices.
+    /// ## m
+    /// Number of qubits required to represent distance between any 2 points.
+    /// ## indices
+    /// Indices of datapoints over which to look for pair of points.
+    /// ## distances
+    /// Distances between two points where distances[c] is 
+    /// distance between points c0, c1, such that c0 = c / n; c1 = c % n.
+    ///
+    /// # Example
+    /// ```Q#
+    /// mutable i = 0..15;
+    /// mutable a = new Int[256];
+    /// let c = quant_find_k_smallest(4, 5, i, 2, a);
+    /// ```
     operation quant_find_k_smallest(n: Int, m : Int, indices : Int[], k : Int, distances: Int[]) : Int[][] {
         if (k > Length(indices)) {
             fail "Not enough indices given to find k values.";
@@ -233,6 +410,11 @@
             set result[i] = new Int[2];
             set (result[i][0], result[i][1]) = quant_find_smallest(n, m, curr_indices, distances);
             set curr_indices = Remove(curr_indices, result[i][0]); // Remove for next iteration
+
+            // quant_find_smallest result needs to be appended to include distances to indices already removed.
+            for (j in 0 .. i - 1) {
+                set result[i][1] = result[i][1] + distances[indices[i] * n + indices[j]];
+            }
         }
         return result;
     }
