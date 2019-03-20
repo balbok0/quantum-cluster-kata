@@ -9,7 +9,7 @@ namespace Final_Project
         mutable graph = initSquareMatrix(N);
         for (i in 0 .. N - 1) {
             // find closest values for given value
-            let results = quant_find_k_smallest(n, m, indices, k, distances);
+            let results = quant_find_k_smallest(N, m, indices, k, distances);
 
             // iterate through closest values
             for (j in 0 .. k - 1) {

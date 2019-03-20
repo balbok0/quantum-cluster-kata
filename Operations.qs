@@ -174,7 +174,9 @@
                 IntegerIncrementBE(x - 1, d_min); // Set it to -1, since compare does >, and not >=
 
                 GroversSearch(dist, d_min, phase_qubit, distance_cmp, Length(indices));
-                set result_dist = -1 * MeasureIntegerBE(BigEndian(dist)); // Collapse to correct state.
+
+                negateBE(dist);
+                set result_dist = MeasureIntegerBE(BigEndian(dist)); // Collapse to correct state.
                 set result_idx = MeasureIntegerBE(BigEndian(i)); // Get result from collapsed indices
 
                 ResetAll(dist);
@@ -185,7 +187,7 @@
             ResetAll(i);
         }
 
-        return (result_idx, -result_dist); // change distances back to positive
+        return (result_idx, Modulus(result_dist, n));
     }
 
     function class_find_smallest(n : Int, indices : Int[], distances : Int[]) : (Int, Int) {
