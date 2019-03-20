@@ -158,7 +158,7 @@
         mutable result_idx = 0;
         using(i = Qubit[n]) {
             prep_indices(indices, i);
-            using((dist, d_max, phase_qubit) = (Qubit[m], Qubit[m], Qubit())) {
+            using((dist, d_min, phase_qubit) = (Qubit[m], Qubit[m], Qubit())) {
                 for(idx in 0 .. Length(indices) - 1) {
                     using(j = Qubit[n]) {
                         IntegerIncrementBE(indices[idx], j);
@@ -167,12 +167,14 @@
                     }
                 }
 
+                negateBE(dist);
+
                 // Little bit of cheating, but we were supposed to do a stub oracle.
                 let (_, x) = class_find_smallest(n, indices, distances);
-                IntegerIncrementBE(x - 1, d_max); // Set it to -1, since compare does >, and not >=
+                IntegerIncrementBE(x - 1, d_min); // Set it to -1, since compare does >, and not >=
 
-                GroversSearch(dist, d_max, phase_qubit, distance_cmp, Length(indices));
-                set result_dist = MeasureIntegerBE(BigEndian(dist)); // Collapse to correct state.
+                GroversSearch(dist, d_min, phase_qubit, distance_cmp, Length(indices));
+                set result_dist = -1 * MeasureIntegerBE(BigEndian(dist)); // Collapse to correct state.
                 set result_idx = MeasureIntegerBE(BigEndian(i)); // Get result from collapsed indices
 
                 ResetAll(dist);
@@ -187,20 +189,22 @@
     }
 
     function class_find_smallest(n : Int, indices : Int[], distances : Int[]) : (Int, Int) {
-        mutable max_i = 0;
-        mutable max_dist = 0;
-        for(i in 0.. Length(indices)) {
+        mutable min_i = 0;
+        mutable min_dist = Length(indices) * Max(distances);
+        for(i in 0 .. Length(indices) - 1) {
             mutable dist_i = 0;
-            for(j in 0 .. Length(indices)) {
-                set dist_i = dist_i + distances[i * n + j];
+            
+            for(j in 0 .. Length(indices) - 1) {
+                set dist_i = dist_i - distances[indices[i] * n + indices[j]]; // Make distance negative, so max is actually a min
             }
-            if(dist_i > max_dist) {
-                set max_dist = dist_i;
-                set max_i = dist_i;
+
+            if(dist_i < max_dist) {
+                set min_dist = dist_i;
+                set min_i = indices[i];
             }
         }
 
-        return (max_i, max_dist);
+        return (min_i, min_dist);
     }
 
     operation quant_find_k_smallest(n: Int, m : Int, indices : Int[], k : Int, distances: Int[]) : Int[][] {
