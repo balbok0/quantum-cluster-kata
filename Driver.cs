@@ -16,7 +16,7 @@ namespace Final_Project
 
         static void Main(string[] args)
         {
-            List<List<Int64>> data = load_csv("data_2d_binom_2q.txt");
+            List<List<Int64>> data = load_csv("data_2d_binom.txt");
 
             long[] distances = get_distances(data);
 
@@ -30,14 +30,6 @@ namespace Final_Project
                     indices[i] = i;
                 }
 
-                // Resource Estimator - finish pls?
-                // ResourcesEstimator estimator = new ResourcesEstimator();
-                // QArray<long> result = divisive_clust.Run(estimator, 4, 4, new QArray<long>(indices), new QArray<long>(distances)).Result;
-                // var estimator_data = estimator.Data;
-                // Console.WriteLine($"QubitCliffords: {estimator_data.Rows.Find("QubitClifford")["Sum"]}");
-                // Console.WriteLine($"Ts: {estimator_data.Rows.Find("T")["Sum"]}");
-                // Console.WriteLine($"CNOTs: {estimator_data.Rows.Find("CNOT")["Sum"]}");
-
                 // DEMO - Divisive Clustering
                 // QArray<long> result = divisive_clust.Run(qsim, 4, 5, new QArray<long>(indices), new QArray<long>(distances)).Result;
                 // Console.WriteLine("Result:");
@@ -46,14 +38,30 @@ namespace Final_Project
                 // Console.WriteLine("]");
 
                 // DEMO - Outlier Detection
-                QArray<long> result = quantum_detection_outlier.Run(qsim, 2, 5, new QArray<long>(indices), 2, 3, new QArray<long>(distances)).Result;
-                Console.WriteLine("Result:");
-                Console.Write("[");
-                Console.Write(String.Join(", ", result));
-                Console.WriteLine("]");
+                // QArray<long> result = quantum_detection_outlier.Run(qsim, 2, 5, new QArray<long>(indices), 2, 3, new QArray<long>(distances)).Result;
+                // Console.WriteLine("Result:");
+                // Console.Write("[");
+                // Console.Write(String.Join(", ", result));
+                // Console.WriteLine("]");
 
                 // DEMO - Adder Compare etc.
                 // tests.Run(qsim).Wait();
+
+                // Resource Estimator Div. Clust. - Taking too long will not finish
+                ResourcesEstimator estimator = new ResourcesEstimator();
+                tests.Run(estimator).Wait();
+                var estimator_data = estimator.Data;
+                Console.WriteLine($"QubitCliffords: {estimator_data.Rows.Find("QubitClifford")["Sum"]}");
+                Console.WriteLine($"Ts: {estimator_data.Rows.Find("T")["Sum"]}");
+                Console.WriteLine($"CNOTs: {estimator_data.Rows.Find("CNOT")["Sum"]}");
+
+                // Resource Estimator Div. Clust. - Taking too long will not finish
+                // ResourcesEstimator estimator = new ResourcesEstimator();
+                // QArray<long> result = divisive_clust.Run(estimator, 4, 5, new QArray<long>(indices), new QArray<long>(distances)).Result;
+                // var estimator_data = estimator.Data;
+                // Console.WriteLine($"QubitCliffords: {estimator_data.Rows.Find("QubitClifford")["Sum"]}");
+                // Console.WriteLine($"Ts: {estimator_data.Rows.Find("T")["Sum"]}");
+                // Console.WriteLine($"CNOTs: {estimator_data.Rows.Find("CNOT")["Sum"]}");
             }
         }
 

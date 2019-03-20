@@ -5,9 +5,16 @@ namespace Final_Project
     open Microsoft.Quantum.Extensions.Diagnostics;
     open Microsoft.Quantum.Extensions.Convert;
 
+    /// # Summary
+    /// Tests for all adders, comparators, and rotations
+    ///
+    /// # Example
+    /// ```Q#
+    /// tests();
+    /// ```
     operation tests () : Unit {
-        thorough_adder_test();
-        // thorough_comp_test();
+        thorough_adder_test(4);
+        // thorough_comp_test(4);
         // test_rzk();
     }
 
@@ -29,14 +36,13 @@ namespace Final_Project
     }
 
     /// # Summary
-    /// Tests all possible additions for 4-bit adder
+    /// Tests all possible additions for n-bit adder
     ///
     /// # Example
     /// ```Q#
-    /// thorough_adder_test();
+    /// thorough_adder_test(4);
     /// ```
-    operation thorough_adder_test () : Unit {
-        let n = 4;
+    operation thorough_adder_test (n : Int) : Unit {
         let N = PowI(2, n);
         using (A = Qubit[n]) {
             using (B = Qubit[n]) {
@@ -48,7 +54,7 @@ namespace Final_Project
                         let r = ToStringI(MeasureIntegerBE(BigEndian(A))); // prints A+B
                         let b = ToStringI(MeasureIntegerBE(BigEndian(B))); // prints B
                         let a = ToStringI(i); // prints i (should be what A was)
-                        Message(a + " + " + b + " = " + r);
+                        // Message(a + " + " + b + " = " + r);
                         ResetAll(A);
                         ResetAll(B);
                     }
@@ -58,14 +64,13 @@ namespace Final_Project
     }
     
     /// # Summary
-    /// Tests all possible  combinations for 4-bit comparator
+    /// Tests all possible  combinations for n-bit comparator
     ///
     /// # Example
     /// ```Q#
-    /// thorough_comp_test();
+    /// thorough_comp_test(4);
     /// ```
-    operation thorough_comp_test () : Unit {
-        let n = 4;
+    operation thorough_comp_test (n : Int) : Unit {
         let N = PowI(2, n);
         using (A = Qubit[n]) {
             using (B = Qubit[n]) {
@@ -78,7 +83,7 @@ namespace Final_Project
                             let r = ToStringB((M(c) == One)); // prints if A > B
                             let b = ToStringI(MeasureIntegerBE(BigEndian(B))); // prints B
                             let a = ToStringI(MeasureIntegerBE(BigEndian(A))); // prints A
-                            Message(a + " > " + b + " is " + r);
+                            // Message(a + " > " + b + " is " + r);
                             ResetAll(A);
                             ResetAll(B);
                             Reset(c);
