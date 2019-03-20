@@ -153,8 +153,9 @@
         return Max(distances) * 2 / 3 > idx_dist;
     }
 
-    operation quant_find_smallest(n : Int, m : Int, indices : Int[], distances : Int[]) : Int {
-        mutable result = 0;
+    operation quant_find_smallest(n : Int, m : Int, indices : Int[], distances : Int[]) : (Int, Int) {
+        mutable result_dist = 0;
+        mutable result_idx = 0;
         using(i = Qubit[n]) {
             prep_indices(indices, i);
             using((dist, d_max, phase_qubit) = (Qubit[m], Qubit[m], Qubit())) {
@@ -169,19 +170,20 @@
                 // Little bit of cheating, but we were supposed to do a stub oracle.
                 let (_, x) = class_find_smallest(n, indices, distances);
                 IntegerIncrementBE(x - 1, d_max); // Set it to -1, since compare does >, and not >=
-                
+
                 GroversSearch(dist, d_max, phase_qubit, distance_cmp, Length(indices));
-                let trash = MeasureIntegerBE(BigEndian(dist)); // Collapse to correct state.
-                set result = MeasureIntegerBE(BigEndian(i)); // Get result from collapsed indices
+                set result_dist = MeasureIntegerBE(BigEndian(dist)); // Collapse to correct state.
+                set result_idx = MeasureIntegerBE(BigEndian(i)); // Get result from collapsed indices
 
                 ResetAll(dist);
                 ResetAll(d_max);
                 Reset(phase_qubit);
             }
+
             ResetAll(i);
         }
 
-        return result;
+        return (result_idx, result_dist);
     }
 
     function class_find_smallest(n : Int, indices : Int[], distances : Int[]) : (Int, Int) {
@@ -201,20 +203,30 @@
         return (max_i, max_dist);
     }
 
-    operation quant_find_k_smallest(n: Int, m : Int, indices : Int[], k : Int, distances: Int[]) : Int[] {
+    operation quant_find_k_smallest(n: Int, m : Int, indices : Int[], k : Int, distances: Int[]) : Int[][] {
         if (k < Length(indices)) {
             fail "Not enough indices given to find k values.";
         }
+
+        mutable result = new Int[][k];
         if (k == Length(indices)) {
-            return indices;
+            for (i in 0 .. k-1) {
+                set result[i] = new Int[2];
+                set result[i][0] = indices[i];
+                mutable result_i = 0;
+                for (j in 0 .. Length(indices) - 1) {
+                    set result_i = result_i + distances[n * indices[i] + indices[j]];
+                }
+                set result[i][1] = result_i;
+            }
+            return result;
         }
 
-        mutable result = new Int[k];
         mutable curr_indices = indices;
         for (i in 0 .. k-1) {
-            let result_i = quant_find_smallest(n, m, curr_indices, distances);
-            set curr_indices = Remove(curr_indices, result_i); // Remove for next iteration
-            set result[i] = result[i];
+            set result[i] = new Int[2];
+            set (result[i][0], result[i][1]) = quant_find_smallest(n, m, curr_indices, distances);
+            set curr_indices = Remove(curr_indices, result[i][0]); // Remove for next iteration
         }
         return result;
     }
