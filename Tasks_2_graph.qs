@@ -4,6 +4,28 @@ namespace Final_Project
     open Microsoft.Quantum.Primitive;
     open Microsoft.Quantum.Extensions.Convert;
 
+    /// # Summary
+    /// Creates Neighbourhood Graph where edges are formed between every point and the centers
+    /// where the centers are chosen by quant_find_k_smallest
+    /// and edges are weighted by the distance to the center
+    ///
+    /// # Input
+    /// ## n
+    /// Number of qubits required to represent indices
+    /// ## m
+    /// Number of qubits required to represent distance between any 2 points
+    /// ## indices
+    /// Indices of datapoints over which to look for pair of points.
+    /// ## distances
+    /// Distances between two points where distances[c] is 
+    /// distance between points c0, c1, such that c0 = c / n; c1 = c % n.
+    /// ## k
+    /// Number of centers for quant_find_k_smallest to find
+    ///
+    /// # Example
+    /// ```Q#
+    /// let graph = quantum_neighbourhood_graph(n, m, indices, k, distances);
+    /// ```
     operation quantum_neighbourhood_graph (n : Int, m : Int, indices: Int[], k : Int, distances: Int[]) : Int[][] {
         let N = PowI(2, n);
         mutable graph = initSquareMatrix(N);
@@ -20,6 +42,30 @@ namespace Final_Project
         return graph;
     }
 
+    /// # Summary
+    /// Uses Neighbourhood Graph to calculate the sume of the distances
+    /// from every point to k centers, then marks points with a sum greater than w
+    /// as outliers and returns those marks
+    ///
+    /// # Input
+    /// ## n
+    /// Number of qubits required to represent indices
+    /// ## m
+    /// Number of qubits required to represent distance between any 2 points
+    /// ## indices
+    /// Indices of datapoints over which to look for pair of points.
+    /// ## k
+    /// Number of centers for quant_find_k_smallest to find
+    /// ## w
+    /// threshold for distinguishing outliers
+    /// ## distances
+    /// Distances between two points where distances[c] is 
+    /// distance between points c0, c1, such that c0 = c / n; c1 = c % n.
+    ///
+    /// # Example
+    /// ```Q#
+    /// let outliers = quantum_detection_outlier (n, m, indices, k, w, distances);
+    /// ```
     operation quantum_detection_outlier (n : Int, m : Int, indices: Int[], k : Int, w : Int, distances: Int[]) : Int[] {
         let graph = quantum_neighbourhood_graph(n, m, indices, k, distances); // generate neighborhood graph
         let N = PowI(2, n);
