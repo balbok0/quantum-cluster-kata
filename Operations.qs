@@ -49,7 +49,7 @@
                         prep_indices(indices, j);
 
                         distance_add(i, j, dist, distances);
-                        GroversSearch(dist, d_max, phase_qubit, distance_cmp, Length(indices) * Length(indices) / 2);  // There are C(N, 2) indices combinations.
+                        GroversSearch(dist, d_max, phase_qubit, distance_cmp, Length(indices));
                         let trash = MeasureIntegerBE(BigEndian(dist)); // Collapse to correct state (including indices)
 
                         set prev_i = MeasureIntegerBE(BigEndian(i));
