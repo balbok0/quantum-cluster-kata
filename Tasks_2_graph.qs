@@ -13,8 +13,8 @@ namespace Final_Project
 
             // iterate through closest values
             for (j in 0 .. k - 1) {
-                set graph[i][results[j][0]] = results[j][1]; // create an edge weighted by the distance
-                set graph[results[j][0]][i] = results[j][1]; // the graph is stored as a symmetric matrix
+                set graph[i][results[j][0]] = distances[i*SqrtI(Length(distances)) + results[j][0]]; // create an edge weighted by the distance
+                set graph[results[j][0]][i] = distances[results[j][0]*SqrtI(Length(distances)) + i]; // the graph is stored as a symmetric matrix
             }
         }
         return graph;

@@ -322,7 +322,7 @@
             ResetAll(i);
         }
 
-        return (result_idx, Modulus(result_dist, n));
+        return (result_idx, result_dist);
     }
 
     /// # Summary

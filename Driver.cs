@@ -16,7 +16,7 @@ namespace Final_Project
 
         static void Main(string[] args)
         {
-            List<List<Int64>> data = load_csv("data_2d_binom.txt");
+            List<List<Int64>> data = load_csv("data_2d_binom_2q.txt");
 
             long[] distances = get_distances(data);
 
@@ -31,18 +31,18 @@ namespace Final_Project
                 }
 
                 // DEMO - Divisive Clustering
-                QArray<long> result = divisive_clust.Run(qsim, 4, 5, new QArray<long>(indices), new QArray<long>(distances)).Result;
-                Console.WriteLine("Result:");
-                Console.Write("[");
-                Console.Write(String.Join(", ", result));
-                Console.WriteLine("]");
-
-                // DEMO - Outlier Detection
-                // QArray<long> result = quantum_detection_outlier.Run(qsim, 2, 5, new QArray<long>(indices), 2, 3, new QArray<long>(distances)).Result;
+                // QArray<long> result = divisive_clust.Run(qsim, 4, 5, new QArray<long>(indices), new QArray<long>(distances)).Result;
                 // Console.WriteLine("Result:");
                 // Console.Write("[");
                 // Console.Write(String.Join(", ", result));
                 // Console.WriteLine("]");
+
+                // DEMO - Outlier Detection
+                QArray<long> result = quantum_detection_outlier.Run(qsim, 2, 5, new QArray<long>(indices), 2, 3, new QArray<long>(distances)).Result;
+                Console.WriteLine("Result:");
+                Console.Write("[");
+                Console.Write(String.Join(", ", result));
+                Console.WriteLine("]");
 
                 // DEMO - Adder Compare etc.
                 // tests.Run(qsim).Wait();
