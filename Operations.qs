@@ -49,7 +49,7 @@
                         prep_indices(indices, j);
 
                         distance_add(i, j, dist, distances);
-                        GroversSearch(dist, d_max, phase_qubit, distance_cmp, Length(indices));
+                        GroversSearch(dist, d_max, phase_qubit, distance_cmp, Length(indices) * Length(indices) / 2);  // There are C(N, 2) indices combinations.
                         let trash = MeasureIntegerBE(BigEndian(dist)); // Collapse to correct state (including indices)
 
                         set prev_i = MeasureIntegerBE(BigEndian(i));
@@ -253,7 +253,6 @@
     /// similarity_crit(a, b, 4);
     /// ```
     function similarity_crit(point_idxs : Int[], distances : Int[], n : Int) : Bool {
-        // Stub method, which will make divise clustering run exactly once.
         mutable idx_dist = 0;
         for(i in 0..Length(point_idxs) - 2) {
             for (j in i..Length(point_idxs) - 1) {
@@ -322,7 +321,7 @@
             ResetAll(i);
         }
 
-        return (result_idx, result_dist);
+        return (result_idx, Modulus(result_dist, n));
     }
 
     /// # Summary

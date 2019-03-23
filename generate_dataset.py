@@ -35,6 +35,18 @@ b = zip(bx, by)
 data = np.concatenate((a, b))
 np.savetxt('data_2d_binom.txt', data, fmt='%d', delimiter=';')
 
+# 2D two peak binomial
+# 5 + 5 = 10 < 15/sqrt(2)
+ax = np.multiply(-1, np.random.binomial(2, 7.0/15.0, 1))
+ay = np.multiply(-1, np.random.binomial(2, 7.0/15.0, 1))
+a = zip(ax, ay)
+bx = np.random.binomial(2, 10.0/15.0, 3)
+by = np.random.binomial(2, 10.0/15.0, 3)
+b = zip(bx, by)
+
+data = np.concatenate((a, b))
+np.savetxt('data_2d_binom2q.txt', data, fmt='%d', delimiter=';')
+
 # 2D three peak binomial
 # 5 + 5 = 10 < 15/sqrt(2)
 ax = np.multiply(-1, np.random.binomial(15, 7.0/15.0, 5))
